@@ -30,6 +30,14 @@ const salvar = async () => {
 
 }
 
+function createElementFromHTML(htmlString) {
+  var div = document.createElement('div');
+  div.innerHTML = htmlString.trim();
+
+  // Change this to div.childNodes to support multiple top-level nodes
+  return div.firstChild; 
+}
+
 async function getData() {
   
     const response = await fetch('/api');
@@ -39,25 +47,75 @@ async function getData() {
     // Busca os campos 
     const titulo = document.getElementById('titulo');
     const resumo = document.getElementById('resumo');
-    const migration = document.getElementById('migration');
-    const ldn = document.getElementById('ldn');
-    const views = document.getElementById('views');
-    const outros = document.getElementById('outros');
-    
-    titulo.setAttribute('style', 'white-space: pre;');
-    resumo.setAttribute('style', 'white-space: pre;');
-    migration.setAttribute('style', 'white-space: pre;');
-    ldn.setAttribute('style', 'white-space: pre;');
-    views.setAttribute('style', 'white-space: pre;');
-    outros.setAttribute('style', 'white-space: pre;');
+    const corpo_index = document.getElementById('corpo-index');
+    const container_notas = document.getElementById('container-notas');
 
-    titulo.value = json.titulo;
-    resumo.value = json.resumo;
-    migration.textContent = json.migration;
-    ldn.textContent = json.ldn;
-    views.textContent = json.views;
-    outros.textContent  = json.outros;
-    
+    let i=0
+
+    for ( const nota of json.notas ) {
+
+        conteudo_notas = `
+            <div class="row">
+                <div class="col">
+
+                    <div id="corpo-nota" class="card">
+                        <div id="titulo-nota" class="card-header">
+                            ${nota.titulo}
+                        </div>
+
+                        <div id="corpo-nota-${i}" class="card-body">
+                        </div> 
+
+                        <div class="card-footer">
+                            <b>Resumo:</b>
+                            <p id="resumo-nota">
+                                ${nota.resumo}
+                            </p>
+                        </div>
+                </div>
+            </div>
+            <br>
+            <br>
+        `
+        container_notas.appendChild(createElementFromHTML(conteudo_notas));
+
+
+        for ( const cartao of nota.cartoes ) {
+            console.log(cartao)
+
+            const corpo_nota_atual = document.getElementById(`corpo-nota-${i}`);
+
+            conteudo_corpo_atual = `
+                <div class="row">
+                
+                    <div class="col-sm-2 text-center">
+                        <b>${cartao.titulo}</b>
+                    </div>
+
+                    <div class="col-sm-10" style="padding-bottom:10px;">
+                        <p>${cartao.resumo}</p>
+                    </div>
+
+                </div>
+            `
+            corpo_nota_atual.appendChild(createElementFromHTML(conteudo_corpo_atual));
+        }
+
+        i = i + 1
+
+        conteudo_index = `
+            <div class="row">
+                <div class="col text-center">
+                    <a href="/nota.html?nota=${nota.titulo}">${nota.titulo}</a>
+                </div>
+            </div>
+        `
+        corpo_index.appendChild(createElementFromHTML(conteudo_index));
+    }
+
+    titulo.textContent = json.titulo;
+    resumo.textContent = json.resumo;
+
 }
 
 // busca os dados do banco quando inicia a pagina
@@ -67,4 +125,4 @@ getData();
 // fazer a função descrita abaixo
 button.addEventListener('click', salvar );
 
-setInterval(salvar, 600000);
+//setInterval(salvar, 600000);

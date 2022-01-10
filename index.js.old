@@ -1,0 +1,184 @@
+const express = require('express');
+const Datastore = require('nedb');
+console.log('Iniciando servidor... ',Date.now());
+const app = express();
+app.listen(3000, () => console.log('listening at 3000'));
+app.use(express.static('public'));
+app.use(express.json({ limit: '1mb' }));
+
+// Prototipos dos objetos
+
+function Cartao(titulo, resumo) {
+      this.titulo = titulo;
+      this.resumo = resumo;
+}
+
+function Nota(titulo, resumo) {
+    this.titulo = titulo;
+    this.cartoes = [];
+    this.resumo = resumo;
+    this.insere_cartao = function(cartao) {
+        this.cartoes.push(cartao);
+    };
+}
+
+function Anotacao(titulo, resumo) {
+    this.titulo = titulo;
+    this.notas = [];
+    this.resumo = resumo;
+    this.insere_nota = function(nota) {
+        this.notas.push(nota);
+    };
+}
+
+const cartao1   = new Cartao("Linus","Grande sistema operacional");
+const cartao2   = new Cartao("Mac OS","Sistema operacional da maçã");
+const cartao3   = new Cartao("Windows","Sistema operacional");
+const nota1     = new Nota("Linuski", "A primeira pagina armazenada");
+const nota2     = new Nota("MacOs", "A segunda pagina");
+const nota3     = new Nota("Windows", "A terceira pagina");
+const anotacao  = new Anotacao("Estudo dos so's","um estudo abrangendo todos so's");
+
+
+nota1.insere_cartao(cartao1);
+
+nota2.insere_cartao(cartao2);
+nota2.insere_cartao(cartao1);
+nota2.insere_cartao(cartao1);
+
+nota3.insere_cartao(cartao3);
+nota3.insere_cartao(cartao3);
+nota3.insere_cartao(cartao3);
+nota3.insere_cartao(cartao3);
+nota3.insere_cartao(cartao3);
+
+anotacao.insere_nota(nota1); 
+anotacao.insere_nota(nota2); 
+anotacao.insere_nota(nota3); 
+
+const myArray = JSON.stringify(anotacao);
+console.log(myArray);
+
+console.log(anotacao.titulo);
+for ( const obj of anotacao.notas ) {
+    console.log(obj.titulo);
+}
+console.log(anotacao.resumo);
+
+const database = new Datastore('database.db');
+database.loadDatabase();
+
+app.get('/api/anotacao/:id_anotacoes/nota/:id_notas', (request, response) => {
+
+    id_anotacoes = request.params.id_anotacoes
+    id_notas = request.params.id_notas
+
+    // com esta query busca todos, organiza com mais recente primeiro e limita um resultado
+    database.find({}).sort({timestamp: -1}).limit(1).exec((err, data) => {
+        console.log(request.method,request.path);
+        if (err) {
+            console.log("error ",err)
+            response.end()
+        }
+        if(!data[id_anotacoes].nota[id_notas]) {
+            msg = "Não há nota para esta anotações"
+            console.log("Erro",msg)
+            response.json({"msg":msg,"status":"error"})
+        } else {
+            console.log("retornou ",data[id_anotacoes].nota[id_notas])
+            response.json(data[id_anotacoes])
+            response.end()
+        }
+
+    })
+})
+
+app.get('/api/anotacao/:id_anotacoes/notas', (request, response) => {
+
+    id_anotacoes = request.params.id_anotacoes
+
+    // com esta query busca todos, organiza com mais recente primeiro e limita um resultado
+    database.find({}).sort({timestamp: -1}).limit(1).exec((err, data) => {
+        console.log("/api/anotacoes/"+id_anotacoes+"/notas")
+        console.log(data[id_anotacoes].notas)
+
+        if (err) {
+            console.log("error ",err)
+            response.end()
+        }
+
+        if(!data[id_anotacoes].notas) {
+            console.log("nada")
+            response.json({"msg":"Não há anotações para este id","status":"error"})
+        } else {
+            data_to_ret = {"msg":"Notas da anotação x foram retornadas com sucesso", "status":"sucesso", "dados": data[id_anotacoes].notas}
+            console.log("retornou ",data_to_ret)
+            response.json(data_to_ret)
+        }
+
+    })
+})
+// melhor 
+app.get('/api/anotacao/:id_anotacao', (request, response) => {
+    id_anotacao = request.params.id_anotacao
+    // com esta query busca todos, organiza com mais recente primeiro e limita um resultado
+    database.find({}).sort({timestamp: -1}).limit(1).exec((err, data) => {
+        console.log(request.method,request.path);
+        if (err) {
+            console.log("error ",err)
+            response.end()
+        }
+
+        if(!data[id_anotacao]) {
+            msg = "Não há anotações para este id"
+            console.log("Erro",msg)
+            response.json({"msg":msg,"status":"error"})
+        } else {
+            msg = "Todas as anotações foram retornadas com sucesso."
+            console.log(msg)
+            data_to_ret = {"msg":msg, "status":"sucesso", "dados": data[id_anotacao]}
+            console.log("retornou ",data_to_ret)
+        }
+
+    })
+})
+
+app.get('/api/anotacoes', (request, response) => {
+    // com esta query busca todos, organiza com mais recente primeiro e limita um resultado
+    database.find({}).sort({timestamp: -1}).limit(1).exec((err, data) => {
+        console.log(request.path);
+        console.log(data);
+        if (err) {
+            response.end();
+            return;
+        }
+            return_data = {"anotacoes":data,"status":"success"}
+            response.json(return_data)
+        }
+    )
+})
+
+app.post('/api', (request, response) => {
+    const data = anotacao;
+    const timestamp = Date.now();
+
+    console.log(request.path);
+
+    data.timestamp = timestamp;
+    database.insert(data); 
+    response.json(data);
+});
+
+app.get('/api', (request, response) => {
+    // com esta query busca todos, organiza com mais recente primeiro e limita um resultado
+  database.find({}).sort({timestamp: -1}).limit(1).exec((err, data) => {
+      console.log(data);
+    if (err) {
+      response.end();
+      return;
+    }
+    response.json(data[0])
+  })
+})
+
+

@@ -1,0 +1,38 @@
+titulo-anotacao1
+
+    titulo-notas1
+
+        titulo-cartao1
+        resumo-cartao1
+
+        titulo-cartao2
+        resumo-cartao2
+
+        titulo-cartao3
+        resumo-cartao3
+
+    resumo-notas1
+
+resumo-anotacao1
+
+linux certificação
+    capitulo 1
+        fstab
+        comando relativo ao sistema
+
+        echo
+        comando que imprime na tela
+
+    capitulo que discutiu diversas coisas
+
+    capitulo 2 nota pri
+
+        blau
+        é uma coisa delirante
+
+        para
+        bens
+
+    capitulo que discutiu o que precisava
+
+foi bom enquanto durou
