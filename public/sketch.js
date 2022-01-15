@@ -1,5 +1,6 @@
 // Busca o botão
 const button = document.getElementById('submit');
+const criar_campos = document.getElementById('criar-campos');
 
 
 const salvar = async () => {
@@ -58,8 +59,8 @@ async function getData() {
             <div class="row">
                 <div class="col">
 
-                    <div id="corpo-nota" class="card">
-                        <div id="titulo-nota" class="card-header">
+                    <div class="card">
+                        <div id="${nota.titulo}" class="card-header">
                             ${nota.titulo}
                         </div>
 
@@ -72,10 +73,11 @@ async function getData() {
                                 ${nota.resumo}
                             </p>
                         </div>
+                    </div>
+                    <br>
+                    <br>
                 </div>
             </div>
-            <br>
-            <br>
         `
         container_notas.appendChild(createElementFromHTML(conteudo_notas));
 
@@ -106,7 +108,7 @@ async function getData() {
         conteudo_index = `
             <div class="row">
                 <div class="col text-center">
-                    <a href="/nota.html?nota=${nota.titulo}">${nota.titulo}</a>
+                    <a href="#${nota.titulo}">${nota.titulo}</a>
                 </div>
             </div>
         `
@@ -118,11 +120,96 @@ async function getData() {
 
 }
 
+function criar_campos_cartao() {
+  
+    // Busca os campos 
+    const container_cartoes = document.getElementById('container-cartoes');
+
+    conteudo_cartoes = `
+        <label for="nome-cartao">nome cartao</label>            
+        <br>
+        <textarea id="resum2o" name="resumo" rows="1" cols="50"></textarea>
+        <br>
+
+        <hr>
+
+        <label for="migration">conteudo cartao</label>            
+        <br>
+        <textarea id="migration" name="migration" rows="1" cols="50"></textarea>
+        <br>
+
+            <div class="row">
+                <div class="col">
+
+                    <div class="card">
+                        <div id="${nota.titulo}" class="card-header">
+                            ${nota.titulo}
+                        </div>
+
+                        <div id="corpo-nota-${i}" class="card-body">
+                        </div> 
+
+                        <div class="card-footer">
+                            <b>Resumo:</b>
+                            <p id="resumo-nota">
+                                ${nota.resumo}
+                            </p>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                </div>
+            </div>
+        `
+        container_notas.appendChild(createElementFromHTML(conteudo_notas));
+
+
+        for ( const cartao of nota.cartoes ) {
+            console.log(cartao)
+
+            const corpo_nota_atual = document.getElementById(`corpo-nota-${i}`);
+
+            conteudo_corpo_atual = `
+                <div class="row">
+                
+                    <div class="col-sm-2 text-center">
+                        <b>${cartao.titulo}</b>
+                    </div>
+
+                    <div class="col-sm-10" style="padding-bottom:10px;">
+                        <p>${cartao.resumo}</p>
+                    </div>
+
+                </div>
+            `
+            corpo_nota_atual.appendChild(createElementFromHTML(conteudo_corpo_atual));
+        }
+
+        i = i + 1
+
+        conteudo_index = `
+            <div class="row">
+                <div class="col text-center">
+                    <a href="#${nota.titulo}">${nota.titulo}</a>
+                </div>
+            </div>
+        `
+        corpo_index.appendChild(createElementFromHTML(conteudo_index));
+    }
+
+    titulo.textContent = json.titulo;
+    resumo.textContent = json.resumo;
+
+}
+
+
 // busca os dados do banco quando inicia a pagina
 getData();
 
 // Fica esperando por um evento de clique no botão para
 // fazer a função descrita abaixo
+
 button.addEventListener('click', salvar );
+criar_campos.addEventListener('click', salvar );
 
 //setInterval(salvar, 600000);

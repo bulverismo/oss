@@ -31,11 +31,11 @@ function Anotacao(titulo, resumo) {
     };
 }
 
-const cartao1   = new Cartao("Linus","Grande sistema operacional");
+const cartao1   = new Cartao("Linus","Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
 const cartao2   = new Cartao("Mac OS","Sistema operacional da maçã");
 const cartao3   = new Cartao("Windows","Sistema operacional");
 const nota1     = new Nota("Linukis", "A primeira pagina armazenada");
-const nota2     = new Nota("MacOs", "A segunda pagina");
+const nota2     = new Nota("Mac Os X", "A segunda pagina");
 const nota3     = new Nota("Windows", "A terceira pagina");
 const anotacao  = new Anotacao("Estudo dos so's","um estudo abrangendo todos so's");
 
